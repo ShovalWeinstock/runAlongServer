@@ -7,17 +7,23 @@ server.use(BodyParser.json());
 server.use(BodyParser.urlencoded({ extended: true }));
 
 //const client = new MongoClient(process.env["ATLAS_URI"]);
-// added "?retryWrites=true&w=majority";" to the end of the string
+//added "?retryWrites=true&w=majority";" to the end of the string
 const uri = "mongodb+srv://shoval:Atlas123@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
 
 var db;
 
-async function validateUser(username, password) {
+/**
+ * Check if the given user information is valid
+ */
+async function validateUser(userInfo) {
     // todo - check if the password is valid in the client side
     // todo - check id the username already exsits
     return true;
 }
 
+/**
+ * Add the given user to the DB (if it is valid) 
+ */
 async function addUser(newListing){
     result = null;
     if (validateUser(newListing)) {
@@ -27,6 +33,9 @@ async function addUser(newListing){
     return result;
 }
 
+/**
+ * POST new user 
+ */
 server.post("/usersCollection", async (request, response, next) => {
     try {
         let result = await addUser(request.body);
@@ -36,10 +45,13 @@ server.post("/usersCollection", async (request, response, next) => {
     }
 });
 
-server.get("/usersCollection/:username:/password", async (request, response, next) => {
+/**
+ * GET user by username and password
+ */
+server.get("/loginInfoCollection/:username:/password", async (request, response, next) => {
     try {
-        let result = await db.collection("usersCollenction").findOne({ "username": request.params.username,
-                                                "password": request.params.password });
+        let result = await db.collection("loginInfoCollection").findOne({ "username": request.params.username,
+                                                                          "password": request.params.password });
         response.send(result); // todo return the user, not the login info!
     } catch (e) {
         response.status(500).send({ message: e.message });
@@ -68,7 +80,6 @@ async function main(){
         try {
             await client.connect();
             db = client.db("runalong");
-            console.log("Listening at :3000...");
 
             // await addUser(
             //     {
