@@ -2,28 +2,11 @@
 // const app = express()
 // const port = 3000
 
-// function validateUser(username, password) {
-
-// }
-
-// function addUser(username, password, nickname) {
-
-// }
-
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
-
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
-
 const {MongoClient} = require("mongodb");
 const Express = require("express");
 const BodyParser = require('body-parser');
 
 const server = Express();
-
 server.use(BodyParser.json());
 server.use(BodyParser.urlencoded({ extended: true }));
 
@@ -32,20 +15,33 @@ server.use(BodyParser.urlencoded({ extended: true }));
 const uri = "mongodb+srv://shoval:Atlas123@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 
-var collection;
+async function validateUser(username, password) {
+    // todo - check if the password is valid in the client side
+    // todo - check id the username already exsits
+    return true;
+}
+
+async function addUser(newListing){
+    result = null;
+    if (await validateUser(newListing)) {
+        const result = await db.collection("usersCollenction").insertOne(newListing);
+        console.log(`New listing created with the following id: ${result.insertedId}`); //todo delete
+    }
+    return result;
+}
 
 server.post("/usersCollection", async (request, response, next) => {
     try {
-        let result = await collection.insertOne(request.body);
+        let result = await addUser(request.body);
         response.send(result);
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
 });
 
-server.get("/plummies/:plummie_tag", async (request, response, next) => {
+server.get("/usersCollection/:username:/password", async (request, response, next) => {
     try {
-        let result = await collection.findOne({ "username": request.params.username,
+        let result = await db.collection("usersCollenction").findOne({ "username": request.params.username,
                                                 "password": request.params.password });
         response.send(result); // todo return the user, not the login info!
     } catch (e) {
@@ -53,16 +49,25 @@ server.get("/plummies/:plummie_tag", async (request, response, next) => {
     }
 });
 
-server.get("/plummies/:id", async (request, response, next) => {});
-server.put("/plummies/:plummie_tag", async (request, response, next) => {});
 
-
-
+// todo change password
+// todo change 
+// server.put("/plummies/:plummie_tag", async (request, response, next) => {
+//     try {
+//         let result = await db.collection("usersCollenction").updateOne(
+//             { "plummie_tag": request.params.plummie_tag },
+//             { "$set": request.body }
+//         );
+//         response.send(result);
+//     } catch (e) {
+//         response.status(500).send({ message: e.message });
+//     }
+// });
 
 server.listen("3000", async () => {
     try {
         await client.connect();
-        collection = client.db("runalong").collection("usersCollection");
+        db = client.db("runalong");
         console.log("Listening at :3000...");
     } catch (e) {
         console.error(e);
