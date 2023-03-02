@@ -1,7 +1,3 @@
-// const express = require('express')
-// const app = express()
-// const port = 3000
-
 const {MongoClient} = require("mongodb");
 const Express = require("express");
 const BodyParser = require('body-parser');
@@ -13,7 +9,8 @@ server.use(BodyParser.urlencoded({ extended: true }));
 //const client = new MongoClient(process.env["ATLAS_URI"]);
 // added "?retryWrites=true&w=majority";" to the end of the string
 const uri = "mongodb+srv://shoval:Atlas123@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
+
+var db;
 
 async function validateUser(username, password) {
     // todo - check if the password is valid in the client side
@@ -23,8 +20,8 @@ async function validateUser(username, password) {
 
 async function addUser(newListing){
     result = null;
-    if (await validateUser(newListing)) {
-        const result = await db.collection("usersCollenction").insertOne(newListing);
+    if (validateUser(newListing)) {
+        const result = await db.collection("usersCollection").insertOne(newListing);
         console.log(`New listing created with the following id: ${result.insertedId}`); //todo delete
     }
     return result;
@@ -50,8 +47,7 @@ server.get("/usersCollection/:username:/password", async (request, response, nex
 });
 
 
-// todo change password
-// todo change 
+// put requests:
 // server.put("/plummies/:plummie_tag", async (request, response, next) => {
 //     try {
 //         let result = await db.collection("usersCollenction").updateOne(
@@ -64,12 +60,35 @@ server.get("/usersCollection/:username:/password", async (request, response, nex
 //     }
 // });
 
-server.listen("3000", async () => {
-    try {
-        await client.connect();
-        db = client.db("runalong");
-        console.log("Listening at :3000...");
-    } catch (e) {
-        console.error(e);
-    }
-});
+async function main(){
+
+    const client = new MongoClient(uri);
+
+    server.listen("3005", async () => {
+        try {
+            await client.connect();
+            db = client.db("runalong");
+            console.log("Listening at :3000...");
+
+            // await addUser(
+            //     {
+            //         "username": "Einat Sarufaaaaaa",
+            //         "nickname": "salkal",
+            //         "rank": 3,
+            //         "coins": 100,
+            //         "outfit": [
+            //           "ObjectId('63ff6c98add07a32333307bb')"
+            //         ],
+            //         "inventory": [
+            //           "ObjectId('63ff6c98add07a32333307bb')"
+            //         ]
+            //       }
+            // )
+
+        } catch (e) {
+            console.error(e);
+        }
+    });
+}
+
+main().catch(console.error);
