@@ -17,7 +17,7 @@ var db;
  */
 async function validateUser(userInfo) {
     // todo - check if the password is valid in the client side
-    // todo - check id the username already exsits
+    // todo - check if the username already exsits
     return true;
 }
 
@@ -45,13 +45,23 @@ server.post("/usersCollection", async (request, response, next) => {
     }
 });
 
+
+
+
+
+
+
 /**
  * GET user by username and password
  */
-server.get("/loginInfoCollection/:username:/password", async (request, response, next) => {
+server.get("/loginInfoCollection", async (request, response, next) => {
     try {
-        let result = await db.collection("loginInfoCollection").findOne({ "username": request.params.username,
-                                                                          "password": request.params.password });
+        let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
+                                                                          "password": request.query.password });
+        if(result != "") {
+            userId = result._id
+            result = getUser(userId)
+        }                                                                  
         response.send(result); // todo return the user, not the login info!
     } catch (e) {
         response.status(500).send({ message: e.message });
@@ -71,6 +81,7 @@ server.get("/loginInfoCollection/:username:/password", async (request, response,
 //         response.status(500).send({ message: e.message });
 //     }
 // });
+
 
 async function main(){
 

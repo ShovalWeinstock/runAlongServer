@@ -13,9 +13,14 @@ const axios = require('axios');
 // });
 
 
-axios.get('http://localhost:3005/loginInfoCollection/EinatSaruf/123')
+axios.get('http://localhost:3005/loginInfoCollection?username=EinatSaruf&password=123')
 .then(response => {
-  console.log(response.data);
+  if (response.data == "") {
+    console.log("not found");
+  } 
+  else {
+    console.log(response.data);
+  }
 })
 .catch(error => {
   console.error(error);
