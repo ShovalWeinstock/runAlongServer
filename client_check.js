@@ -56,3 +56,38 @@ axios.put('http://localhost:3005/usersCollection/inventory?username=Einat_Saruf&
   console.error(error);
 });
 
+
+
+
+// to check "addUser" method - change the server main - 
+
+// async function main(){
+
+//   const client = new MongoClient(uri);
+
+//   server.listen("3005", async () => {
+//       try {
+//           await client.connect();
+//           db = client.db("runalong");
+
+//           // await addUser(
+//           //     {
+//           //         "username": "Einat_Saruf",
+//           //         "nickname": "salkal",
+//           //         "rank": 3,
+//           //         "coins": 100,
+//           //         "outfit": [
+//           //           "ObjectId('63ff6c98add07a32333307bb')"
+//           //         ],
+//           //         "inventory": [
+//           //           "ObjectId('63ff6c98add07a32333307bb')"
+//           //         ]
+//           //       }
+//           // )
+
+//       } catch (e) {
+//           console.error(e);
+//       }
+//   });
+// }
+

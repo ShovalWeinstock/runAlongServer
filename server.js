@@ -154,22 +154,6 @@ async function main(){
         try {
             await client.connect();
             db = client.db("runalong");
-
-            // await addUser(
-            //     {
-            //         "username": "Einat_Saruf",
-            //         "nickname": "salkal",
-            //         "rank": 3,
-            //         "coins": 100,
-            //         "outfit": [
-            //           "ObjectId('63ff6c98add07a32333307bb')"
-            //         ],
-            //         "inventory": [
-            //           "ObjectId('63ff6c98add07a32333307bb')"
-            //         ]
-            //       }
-            // )
-
         } catch (e) {
             console.error(e);
         }
