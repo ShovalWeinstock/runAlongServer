@@ -30,6 +30,7 @@ async function isValidUser(userInfo) {
     }
 }
 
+
 /**
  * Add the given user to the DB (if it is valid) 
  */
@@ -44,6 +45,7 @@ async function addUser(newListing){
     }
     return result;
 }
+
 
 /**
  * POST new user 
@@ -70,6 +72,7 @@ async function getUserById(id) {
     }
 }
 
+
 /**
  * GET user by username and password
  */
@@ -90,18 +93,21 @@ server.get("/loginInfoCollection", async (request, response, next) => {
 });
 
 
-// put requests:
-// server.put("/plummies/:plummie_tag", async (request, response, next) => {
-//     try {
-//         let result = await db.collection("usersCollenction").updateOne(
-//             { "plummie_tag": request.params.plummie_tag },
-//             { "$set": request.body }
-//         );
-//         response.send(result);
-//     } catch (e) {
-//         response.status(500).send({ message: e.message });
-//     }
-// });
+/**
+ * UPDATE rank by username (increase by 1)
+ */
+server.put("/usersCollection/rank/:username", async (request, response, next) => {
+    try {
+        let result = await db.collection("usersCollection").updateOne(
+            { username: request.params.username },
+            { $inc: { rank: 1 } }
+        );
+        response.send(result);
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
 
 
 async function main(){
@@ -115,7 +121,7 @@ async function main(){
 
             // await addUser(
             //     {
-            //         "username": "Einat Saruf",
+            //         "username": "Einat_Saruf",
             //         "nickname": "salkal",
             //         "rank": 3,
             //         "coins": 100,
