@@ -1,4 +1,4 @@
-const {MongoClient} = require("mongodb");
+const {MongoClient, ObjectId} = require("mongodb");
 const Express = require("express");
 const BodyParser = require('body-parser');
 
@@ -46,10 +46,24 @@ server.post("/usersCollection", async (request, response, next) => {
 });
 
 
+// server.get("/usersCollection", async (request, response, next) => {
+//     try {
+//         let result = await db.collection("usersCollection").findOne({ "_id": request.query.id });                                                   
+//         response.send(result);
+//     } catch (e) {
+//         response.status(500).send({ message: e.message });
+//     }
+// });
 
 
-
-
+async function getUserById(id) {
+    try {
+        let result = await db.collection("usersCollection").findOne({"_id": new ObjectId(id)});                                              
+        return result;
+    } catch (e) {
+        console.error(e);
+    }
+}
 
 /**
  * GET user by username and password
@@ -58,10 +72,12 @@ server.get("/loginInfoCollection", async (request, response, next) => {
     try {
         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
                                                                           "password": request.query.password });
-        if(result != "") {
-            userId = result._id
-            result = getUser(userId)
-        }                                                                  
+        if(result != null) {
+            var str = result.userRef;
+            var userId = str.substring(str.indexOf("(") + 1, str.indexOf(")")).replace(/'/g, '');
+            result = await getUserById(userId)
+        }   
+
         response.send(result); // todo return the user, not the login info!
     } catch (e) {
         response.status(500).send({ message: e.message });
