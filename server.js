@@ -49,6 +49,7 @@ async function addUser(newListing){
 
 /**
  * POST new user 
+ * 'http://localhost:3005/usersCollection'
  */
 server.post("/usersCollection", async (request, response, next) => {
     try {
@@ -75,6 +76,7 @@ async function getUserById(id) {
 
 /**
  * GET user by username and password
+ * 'http://localhost:3005/loginInfoCollection?username=USERNAME&password=PASSWORD'
  */
 server.get("/loginInfoCollection", async (request, response, next) => {
     try {
@@ -95,6 +97,7 @@ server.get("/loginInfoCollection", async (request, response, next) => {
 
 /**
  * UPDATE rank by username (increase by 1)
+ * 'http://localhost:3005/usersCollection/rank/USERNAME'
  */
 server.put("/usersCollection/rank/:username", async (request, response, next) => {
     try {
@@ -108,6 +111,22 @@ server.put("/usersCollection/rank/:username", async (request, response, next) =>
     }
 });
 
+
+/**
+ * UPDATE coins given username and amount of coins
+ * 'http://localhost:3005/usersCollection/coins'
+ */
+server.put("/usersCollection/coins", async (request, response, next) => {
+    try {
+        let result = await db.collection("usersCollection").updateOne(
+            { username: request.query.username },
+            { $inc: { coins: parseInt(request.query.amount) } }
+        );
+        response.send(result);
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
 
 
 async function main(){

@@ -29,7 +29,16 @@ const axios = require('axios');
 // });
 
 // increment rank
-axios.put('http://localhost:3005/usersCollection/rank/Einat_Saruf')
+// axios.put('http://localhost:3005/usersCollection/rank/Einat_Saruf')
+//   .then(response => {
+//     console.log(response.data);
+//   })
+//   .catch(error => {
+//     console.error(error);
+//   });
+
+// update coins
+  axios.put('http://localhost:3005/usersCollection/coins?username=Einat_Saruf&amount=-10')
   .then(response => {
     console.log(response.data);
   })
