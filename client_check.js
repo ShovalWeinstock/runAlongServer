@@ -4,8 +4,8 @@ const axios = require('axios');
 // add user
 // axios.post('http://localhost:3005/usersCollection', {
 //   "username": "testuser",
+//   "nickname": "banani",
 //   "password": "testpassword",
-//   "email": "testuser@example.com"
 // })
 // .then(response => {
 //   console.log(response.data);
@@ -15,18 +15,18 @@ const axios = require('axios');
 // });
 
 // get user object by username and password
-// axios.get('http://localhost:3005/loginInfoCollection?username=EinatSaruf&password=123')
-// .then(response => {
-//   if (response.data == "") {
-//     console.log("not found");
-//   } 
-//   else {
-//     console.log(response.data);
-//   }
-// })
-// .catch(error => {
-//   console.error(error);
-// });
+axios.get('http://localhost:3005/loginInfoCollection?username=EinatSaruf&password=123')
+.then(response => {
+  if (response.data == "") {
+    console.log("not found");
+  } 
+  else {
+    console.log(response.data);
+  }
+})
+.catch(error => {
+  console.error(error);
+});
 
 // increment rank
 // axios.put('http://localhost:3005/usersCollection/rank/Einat_Saruf')
@@ -48,13 +48,13 @@ const axios = require('axios');
 
 
 // update coins (add item)
-axios.put('http://localhost:3005/usersCollection/inventory?username=Einat_Saruf&itemId=63ff6c98add07a32333307bb')
-.then(response => {
-  console.log(response.data);
-})
-.catch(error => {
-  console.error(error);
-});
+// axios.put('http://localhost:3005/usersCollection/inventory?username=Einat_Saruf&itemId=63ff6c98add07a32333307bb')
+// .then(response => {
+//   console.log(response.data);
+// })
+// .catch(error => {
+//   console.error(error);
+// });
 
 
 

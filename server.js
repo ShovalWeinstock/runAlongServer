@@ -19,11 +19,11 @@ var db;
 async function isValidUser(userInfo) {
     // todo - check if the password is valid in the client side?
     try {
-        let usernameIsTaken = await db.collection("usersCollection").findOne({"username": userInfo.username});                      
-        if(usernameIsTaken != null) {
-            return false; // invalid user
+        let findUsername = await db.collection("usersCollection").findOne({"username": userInfo.username});                      
+        if(findUsername == null) {
+            return true; // username is taken - invalid user
         }                       
-        return true; // valid user
+        return false; // valid user
     } catch (e) {
         console.error(e);
         return false;
@@ -37,12 +37,22 @@ async function isValidUser(userInfo) {
 async function addUser(newListing){
     result = null;
     if (await isValidUser(newListing)) {
-        const result = await db.collection("usersCollection").insertOne(newListing);
-        console.log(`New listing created with the following id: ${result.insertedId}`); //todo delete
+        let userObject = {username: newListing.username,
+                          nickname: newListing.nickname,
+                          rank: 0, 
+                          coins: 0,
+                          outfit: [],
+                          inventory: []};
+        const result = await db.collection("usersCollection").insertOne(userObject);
+        let loginInfo = {username: newListing.username,
+                         password: newListing.password,
+                         userRef: result.insertedId};
+        await db.collection("loginInfoCollection").insertOne(loginInfo);
     }
     else {
         console.log("username is taken"); // todo delete
     }
+    
     return result;
 }
 
@@ -66,7 +76,7 @@ server.post("/usersCollection", async (request, response, next) => {
  */
 async function getUserById(id) {
     try {
-        let result = await db.collection("usersCollection").findOne({"_id": new ObjectId(id)});                                              
+        let result = await db.collection("usersCollection").findOne({"_id": id});                                              
         return result;
     } catch (e) {
         console.error(e);
@@ -83,11 +93,8 @@ server.get("/loginInfoCollection", async (request, response, next) => {
         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
                                                                           "password": request.query.password });
         if(result != null) {
-            var str = result.userRef;
-            var userId = str.substring(str.indexOf("(") + 1, str.indexOf(")")).replace(/'/g, '');
-            result = await getUserById(userId)
+            result = await getUserById(result.userRef)
         }   
-
         response.send(result);
     } catch (e) {
         response.status(500).send({ message: e.message });
