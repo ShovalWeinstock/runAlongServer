@@ -12,13 +12,22 @@ const uri = "mongodb+srv://shoval:Atlas123@cluster0.dbts3lw.mongodb.net/test?ret
 
 var db;
 
+
 /**
  * Check if the given user information is valid
  */
-async function validateUser(userInfo) {
-    // todo - check if the password is valid in the client side
-    // todo - check if the username already exsits
-    return true;
+async function isValidUser(userInfo) {
+    // todo - check if the password is valid in the client side?
+    try {
+        let usernameIsTaken = await db.collection("usersCollection").findOne({"username": userInfo.username});                      
+        if(usernameIsTaken != null) {
+            return false; // invalid user
+        }                       
+        return true; // valid user
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
 }
 
 /**
@@ -26,9 +35,12 @@ async function validateUser(userInfo) {
  */
 async function addUser(newListing){
     result = null;
-    if (validateUser(newListing)) {
+    if (await isValidUser(newListing)) {
         const result = await db.collection("usersCollection").insertOne(newListing);
         console.log(`New listing created with the following id: ${result.insertedId}`); //todo delete
+    }
+    else {
+        console.log("username is taken"); // todo delete
     }
     return result;
 }
@@ -46,16 +58,9 @@ server.post("/usersCollection", async (request, response, next) => {
 });
 
 
-// server.get("/usersCollection", async (request, response, next) => {
-//     try {
-//         let result = await db.collection("usersCollection").findOne({ "_id": request.query.id });                                                   
-//         response.send(result);
-//     } catch (e) {
-//         response.status(500).send({ message: e.message });
-//     }
-// });
-
-
+/**
+ * return the object of the user with the given id
+ */
 async function getUserById(id) {
     try {
         let result = await db.collection("usersCollection").findOne({"_id": new ObjectId(id)});                                              
@@ -78,7 +83,7 @@ server.get("/loginInfoCollection", async (request, response, next) => {
             result = await getUserById(userId)
         }   
 
-        response.send(result); // todo return the user, not the login info!
+        response.send(result);
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -110,7 +115,7 @@ async function main(){
 
             // await addUser(
             //     {
-            //         "username": "Einat Sarufaaaaaa",
+            //         "username": "Einat Saruf",
             //         "nickname": "salkal",
             //         "rank": 3,
             //         "coins": 100,
