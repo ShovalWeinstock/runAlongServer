@@ -21,9 +21,9 @@ async function isValidUser(userInfo) {
     try {
         let findUsername = await db.collection("usersCollection").findOne({"username": userInfo.username});                      
         if(findUsername == null) {
-            return true; // username is taken - invalid user
+            return true; // username isn't taken - valid user
         }                       
-        return false; // valid user
+        return false; // invalid user
     } catch (e) {
         console.error(e);
         return false;
