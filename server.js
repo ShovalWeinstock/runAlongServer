@@ -114,13 +114,30 @@ server.put("/usersCollection/rank/:username", async (request, response, next) =>
 
 /**
  * UPDATE coins given username and amount of coins
- * 'http://localhost:3005/usersCollection/coins'
+ * 'http://localhost:3005/usersCollection/coins?username=USERNAME&amount=AMOUNT'
  */
 server.put("/usersCollection/coins", async (request, response, next) => {
     try {
         let result = await db.collection("usersCollection").updateOne(
             { username: request.query.username },
             { $inc: { coins: parseInt(request.query.amount) } }
+        );
+        response.send(result);
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+
+/**
+ * UPDATE invenntory given username and item id
+ * 'http://localhost:3005/usersCollection/inventory?username=USERNAME&itemId=ID'
+ */
+server.put("/usersCollection/inventory", async (request, response, next) => {
+    try {
+        let result = await db.collection("usersCollection").updateOne(
+            { username: request.query.username },
+            { $push: {inventory: new ObjectId(request.query.itemId)} }
         );
         response.send(result);
     } catch (e) {
