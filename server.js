@@ -8,7 +8,7 @@ server.use(BodyParser.urlencoded({ extended: true }));
 
 //const client = new MongoClient(process.env["ATLAS_URI"]);
 //added "?retryWrites=true&w=majority";" to the end of the string
-const uri = "mongodb+srv://shoval:Atlas123@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
+const uri = "mongodb+srv://shoval:atlas@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
 
 var db;
 
