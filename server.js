@@ -82,12 +82,7 @@ server.post("/usersCollection", async (request, response, next) => {
 async function getUserById(id) {
     try {
             let result = await db.collection("usersCollection").findOne({"_id": id});                                              
-            if (result) {
-                response.send(result);
-            }
-            else {
-                response.status(404).send();
-            }
+            return result;
         } 
     catch (e) {
         console.error(e);
@@ -103,8 +98,8 @@ server.get("/loginInfoCollection", async (request, response, next) => {
     try {
         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
                                                                           "password": request.query.password });
+        result = await getUserById(result.userRef)
         if(result) {
-            result = await getUserById(result.userRef)
             response.send(result);
         } 
         else {
