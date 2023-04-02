@@ -64,7 +64,12 @@ async function addUser(newListing){
 server.post("/usersCollection", async (request, response, next) => {
     try {
         let result = await addUser(request.body);
-        response.send(result);
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -76,9 +81,15 @@ server.post("/usersCollection", async (request, response, next) => {
  */
 async function getUserById(id) {
     try {
-        let result = await db.collection("usersCollection").findOne({"_id": id});                                              
-        return result;
-    } catch (e) {
+            let result = await db.collection("usersCollection").findOne({"_id": id});                                              
+            if (result) {
+                response.send(result);
+            }
+            else {
+                response.status(404).send();
+            }
+        } 
+    catch (e) {
         console.error(e);
     }
 }
@@ -92,10 +103,13 @@ server.get("/loginInfoCollection", async (request, response, next) => {
     try {
         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
                                                                           "password": request.query.password });
-        if(result != null) {
+        if(result) {
             result = await getUserById(result.userRef)
-        }   
-        response.send(result);
+            response.send(result);
+        } 
+        else {
+            response.status(404).send();
+        }
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -112,7 +126,12 @@ server.put("/usersCollection/rank/:username", async (request, response, next) =>
             { username: request.params.username },
             { $inc: { rank: 1 } }
         );
-        response.send(result);
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -129,7 +148,12 @@ server.put("/usersCollection/coins", async (request, response, next) => {
             { username: request.query.username },
             { $inc: { coins: parseInt(request.query.amount) } }
         );
-        response.send(result);
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -146,7 +170,12 @@ server.put("/usersCollection/inventory", async (request, response, next) => {
             { username: request.query.username },
             { $push: {inventory: new ObjectId(request.query.itemId)} }
         );
-        response.send(result);
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
