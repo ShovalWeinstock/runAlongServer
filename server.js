@@ -112,6 +112,25 @@ server.get("/loginInfoCollection", async (request, response, next) => {
 
 
 /**
+ * GET shop items
+ * 'http://localhost:3005/clothesCollection'
+ */
+server.get("/clothesCollection", async (request, response, next) => {
+    try {
+        let result = await db.collection("clothesCollection").find({});
+        if(result) {
+            response.send(await result.toArray());
+        } 
+        else {
+            response.status(404).send();
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+
+/**
  * UPDATE rank by username (increase by 1)
  * 'http://localhost:3005/usersCollection/rank/USERNAME'
  */
