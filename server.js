@@ -35,7 +35,7 @@ async function isValidUser(userInfo) {
  * Add the given user to the DB (if it is valid) 
  */
 async function addUser(newListing){
-    result = null;
+    var result = null;
     if (await isValidUser(newListing)) {
         let userObject = {username: newListing.username,
                           nickname: newListing.nickname,
@@ -43,7 +43,7 @@ async function addUser(newListing){
                           coins: 0,
                           outfit: [],
                           inventory: []};
-        const result = await db.collection("usersCollection").insertOne(userObject);
+        result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
                          userRef: result.insertedId};

@@ -17,18 +17,18 @@ const axios = require('axios');
 
 
 // get user object by username and password
-axios.get('http://localhost:3005/loginInfoCollection?username=EinatSaruf&password=123')
-.then(response => {
-  if (response.data == "") {
-    console.log("not found");
-  } 
-  else {
-    console.log(response.data);
-  }
-})
-.catch(error => {
-  console.error(error);
-});
+// axios.get('http://localhost:3005/loginInfoCollection?username=EinatSaruf&password=123')
+// .then(response => {
+//   if (response.data == "") {
+//     console.log("not found");
+//   } 
+//   else {
+//     console.log(response.data);
+//   }
+// })
+// .catch(error => {
+//   console.error(error);
+// });
 
 // increment rank
 // axios.put('http://localhost:3005/usersCollection/rank/Einat_Saruf')
@@ -39,14 +39,14 @@ axios.get('http://localhost:3005/loginInfoCollection?username=EinatSaruf&passwor
 //     console.error(error);
 //   });
 
-// update coins
-// axios.put('http://localhost:3005/usersCollection/coins?username=Einat_Saruf&amount=-10')
-// .then(response => {
-//   console.log(response.data);
-// })
-// .catch(error => {
-//   console.error(error);
-// });
+//update coins
+axios.put('http://localhost:3005/usersCollection/coins?username=EinatSaruf&amount=110')
+.then(response => {
+  console.log(response.data);
+})
+.catch(error => {
+  console.error(error);
+});
 
 
 // update coins (add item)
