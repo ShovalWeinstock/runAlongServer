@@ -41,8 +41,10 @@ async function addUser(newListing){
                           nickname: newListing.nickname,
                           rank: 0, 
                           coins: 0,
-                          outfit: [],
-                          inventory: []};
+                          inventory: [],
+                          bottom: "642c52695f25c89505b00f7c",
+                          top: "63ff6c98add07a32333307bb",
+                          shoes: "642c52695f25c89505b00f7c"};
         result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
@@ -90,25 +92,48 @@ async function getUserById(id) {
 }
 
 
-/**
- * GET user by username and password
- * 'http://localhost:3005/loginInfoCollection?username=USERNAME&password=PASSWORD'
- */
-server.get("/loginInfoCollection", async (request, response, next) => {
+// POST login
+// 'http://localhost:3005/login'
+server.post("/login", async (request, response, next) => {
     try {
-        let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
-                                                                          "password": request.query.password });
-        result = await getUserById(result.userRef)
-        if(result) {
-            response.send(result);
-        } 
-        else {
-            response.status(404).send();
+        const { username, password } = request.body;
+        const loginInfo = await db.collection("loginInfoCollection").findOne({ "username": username, "password": password });
+
+        if (loginInfo) {
+            const user = await getUserById(loginInfo.userRef);
+            if (user) {
+                response.send(user);
+            } else {
+                response.status(404).send({ message: "User not found." });
+            }
+        } else {
+            response.status(401).send({ message: "Invalid username or password." });
         }
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
 });
+
+// old login
+// /**
+//  * GET user by username and password
+//  * 'http://localhost:3005/loginInfoCollection?username=USERNAME&password=PASSWORD'
+//  */
+// server.get("/loginInfoCollection", async (request, response, next) => {
+//     try {
+//         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
+//                                                                           "password": request.query.password });
+//         result = await getUserById(result.userRef)
+//         if(result) {
+//             response.send(result);
+//         } 
+//         else {
+//             response.status(404).send();
+//         }
+//     } catch (e) {
+//         response.status(500).send({ message: e.message });
+//     }
+// });
 
 
 /**

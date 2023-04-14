@@ -40,23 +40,23 @@ const axios = require('axios');
 //   });
 
 //update coins
-axios.put('http://localhost:3005/usersCollection/coins?username=EinatSaruf&amount=110')
-.then(response => {
-  console.log(response.data);
-})
-.catch(error => {
-  console.error(error);
-});
-
-
-// update coins (add item)
-// axios.put('http://localhost:3005/usersCollection/inventory?username=Einat_Saruf&itemId=63ff6c98add07a32333307bb')
+// axios.put('http://localhost:3005/usersCollection/coins?username=EinatSaruf&amount=110')
 // .then(response => {
 //   console.log(response.data);
 // })
 // .catch(error => {
 //   console.error(error);
 // });
+
+
+// update inventory (add item)
+axios.put('http://localhost:3005/usersCollection/inventory?username=EinatSaruf&itemId=642c52695f25c89505b00f7c')
+.then(response => {
+  console.log(response.data);
+})
+.catch(error => {
+  console.error(error);
+});
 
 
 
