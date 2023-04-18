@@ -114,27 +114,6 @@ server.post("/login", async (request, response, next) => {
     }
 });
 
-// old login
-// /**
-//  * GET user by username and password
-//  * 'http://localhost:3005/loginInfoCollection?username=USERNAME&password=PASSWORD'
-//  */
-// server.get("/loginInfoCollection", async (request, response, next) => {
-//     try {
-//         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
-//                                                                           "password": request.query.password });
-//         result = await getUserById(result.userRef)
-//         if(result) {
-//             response.send(result);
-//         } 
-//         else {
-//             response.status(404).send();
-//         }
-//     } catch (e) {
-//         response.status(500).send({ message: e.message });
-//     }
-// });
-
 
 /**
  * GET shop items
@@ -148,6 +127,28 @@ server.get("/clothesCollection", async (request, response, next) => {
         } 
         else {
             response.status(404).send();
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+
+/**
+ * GET items from clothesCollection based on user's inventory
+ * 'http://localhost:3005/clothesCollection?username=USERNAME'
+ */
+server.get("/clothesCollection/inventory/:username", async (request, response, next) => {
+    try {
+        let username = request.params.username;
+        let user = await db.collection("usersCollection").findOne({"username": username});
+        if (user) {
+            const inventoryIds = user.inventory.map(id => new ObjectId(id));
+            console.log("username is taken"); // todo delete
+            const clothes = await db.collection("clothesCollection").find({ "_id": { $in: inventoryIds } }).toArray();
+            response.send(clothes);
+        } else {
+            response.status(404).send({ message: "User not found." });
         }
     } catch (e) {
         response.status(500).send({ message: e.message });
@@ -219,6 +220,28 @@ server.put("/usersCollection/inventory", async (request, response, next) => {
         response.status(500).send({ message: e.message });
     }
 });
+
+
+// old login
+// /**
+//  * GET user by username and password
+//  * 'http://localhost:3005/loginInfoCollection?username=USERNAME&password=PASSWORD'
+//  */
+// server.get("/loginInfoCollection", async (request, response, next) => {
+//     try {
+//         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
+//                                                                           "password": request.query.password });
+//         result = await getUserById(result.userRef)
+//         if(result) {
+//             response.send(result);
+//         } 
+//         else {
+//             response.status(404).send();
+//         }
+//     } catch (e) {
+//         response.status(500).send({ message: e.message });
+//     }
+// });
 
 
 async function main(){
