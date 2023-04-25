@@ -42,9 +42,9 @@ async function addUser(newListing){
                           rank: 0, 
                           coins: 0,
                           inventory: [],
-                          bottom: "642c52695f25c89505b00f7c",
-                          top: "63ff6c98add07a32333307bb",
-                          shoes: "642c52695f25c89505b00f7c"};
+                          bottom: new ObjectId("642c52695f25c89505b00f7c"),
+                          top: new ObjectId("63ff6c98add07a32333307bb"),
+                          shoes: new ObjectId("642c52695f25c89505b00f7c")};
         result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
@@ -208,6 +208,27 @@ server.put("/usersCollection/inventory", async (request, response, next) => {
         let result = await db.collection("usersCollection").updateOne(
             { username: request.query.username },
             { $push: {inventory: new ObjectId(request.query.itemId)} }
+        );
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+/**
+ * UPDATE the outfit (top, bottom, shoes) of the given user
+ * "http://localhost:3005/usersCollection/outfit?username=USERNAME"
+ */
+server.put("/usersCollection/outfit", async (request, response, next) => {
+    try {
+        let result = await db.collection("usersCollection").updateOne(
+            { username: request.query.username },
+            { $set: {top: new ObjectId(request.body.top), bottom: new ObjectId(request.body.bottom), shoes: new ObjectId(request.body.shoes)} }
         );
         if (result) {
             response.send(result);
