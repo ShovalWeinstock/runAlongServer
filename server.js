@@ -144,7 +144,6 @@ server.get("/clothesCollection/inventory/:username", async (request, response, n
         let user = await db.collection("usersCollection").findOne({"username": username});
         if (user) {
             const inventoryIds = user.inventory.map(id => new ObjectId(id));
-            console.log("username is taken"); // todo delete
             const clothes = await db.collection("clothesCollection").find({ "_id": { $in: inventoryIds } }).toArray();
             response.send(clothes);
         } else {
