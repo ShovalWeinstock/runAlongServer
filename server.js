@@ -42,9 +42,9 @@ async function addUser(newListing){
                           rank: 0, 
                           coins: 0,
                           inventory: [],
-                          bottom: new ObjectId("642c52695f25c89505b00f7c"),
-                          top: new ObjectId("63ff6c98add07a32333307bb"),
-                          shoes: new ObjectId("642c52695f25c89505b00f7c")};
+                          bottom: new ObjectId("6454d79c01ba82fa1931ea53"),
+                          top: new ObjectId("6454d76001ba82fa1931ea50"),
+                          shoes: new ObjectId("6454d82501ba82fa1931ea56")};
         result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
