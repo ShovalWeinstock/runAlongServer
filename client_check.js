@@ -58,6 +58,27 @@ const axios = require('axios');
 //   console.error(error);
 // });
 
+// UPDATE password
+const username = 'hi';
+const oldPassword = '1234567A';
+const newPassword = '1234567B';
+
+axios.put(`http://localhost:3005/loginInfoCollection/password`, {
+  username: username,
+  oldPassword: oldPassword,
+  newPassword: newPassword
+})
+  .then(response => {
+    console.log('Password updated successfully:', response.data);
+  })
+  .catch(error => {
+    if (error.response && error.response.status === 404) {
+      console.error('User not found or old password is incorrect.');
+    } else {
+      console.error('Error updating password:', error.message);
+    }
+  });
+
 
 // //get GET items from clothesCollection based on user's inventory
 // axios.get('http://localhost:3005/clothesCollection/inventory/EinatSaruf')
@@ -73,13 +94,13 @@ const axios = require('axios');
 //   console.error(error);
 // });
 
-axios.delete('http://localhost:3005/users?username=fd')
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+// axios.delete('http://localhost:3005/users?username=fd')
+//   .then(response => {
+//     console.log(response.data);
+//   })
+//   .catch(error => {
+//     console.error(error);
+//   });
 
 
 // to check "addUser" method - change the server main - 
