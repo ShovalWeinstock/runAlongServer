@@ -264,6 +264,27 @@ server.put("/usersCollection/outfit", async (request, response, next) => {
 // });
 
 
+// DELETE user by username
+// 'http://localhost:3005/users?username=USERNAME'
+server.delete("/users", async (request, response, next) => {
+    try {
+        const username = request.query.username;
+        const result1 = await db.collection("usersCollection").deleteOne({ username: username }); 
+        const result2 = await db.collection("loginInfoCollection").deleteOne({ username: username });
+
+        if (result1.deletedCount > 0 && result2.deletedCount > 0) {
+            response.send({ message: "User deleted successfully." });
+        } else {
+            response.status(404).send({ message: "User not found." });
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+
+
+
 async function main(){
 
     const client = new MongoClient(uri);

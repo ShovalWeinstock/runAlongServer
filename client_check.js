@@ -59,19 +59,27 @@ const axios = require('axios');
 // });
 
 
-//get GET items from clothesCollection based on user's inventory
-axios.get('http://localhost:3005/clothesCollection/inventory/EinatSaruf')
-.then(response => {
-  if (response.data == "") {
-    console.log("not found");
-  } 
-  else {
+// //get GET items from clothesCollection based on user's inventory
+// axios.get('http://localhost:3005/clothesCollection/inventory/EinatSaruf')
+// .then(response => {
+//   if (response.data == "") {
+//     console.log("not found");
+//   } 
+//   else {
+//     console.log(response.data);
+//   }
+// })
+// .catch(error => {
+//   console.error(error);
+// });
+
+axios.delete('http://localhost:3005/users?username=fd')
+  .then(response => {
     console.log(response.data);
-  }
-})
-.catch(error => {
-  console.error(error);
-});
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
 
 // to check "addUser" method - change the server main - 
