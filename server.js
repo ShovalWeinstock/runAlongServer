@@ -41,7 +41,9 @@ async function addUser(newListing){
                           nickname: newListing.nickname,
                           rank: 0, 
                           coins: 0,
-                          inventory: [],
+                          inventory: [new ObjectId("6454d79c01ba82fa1931ea53"),
+                                      new ObjectId("6454d76001ba82fa1931ea50"),
+                                      new ObjectId("6454d82501ba82fa1931ea56") ],
                           bottom: new ObjectId("6454d79c01ba82fa1931ea53"),
                           top: new ObjectId("6454d76001ba82fa1931ea50"),
                           shoes: new ObjectId("6454d82501ba82fa1931ea56")};
