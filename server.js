@@ -41,10 +41,12 @@ async function addUser(newListing){
                           nickname: newListing.nickname,
                           rank: 0, 
                           coins: 0,
-                          inventory: [],
-                          bottom: new ObjectId("642c52695f25c89505b00f7c"),
-                          top: new ObjectId("63ff6c98add07a32333307bb"),
-                          shoes: new ObjectId("642c52695f25c89505b00f7c")};
+                          inventory: [new ObjectId("6454d79c01ba82fa1931ea53"),
+                                      new ObjectId("6454d76001ba82fa1931ea50"),
+                                      new ObjectId("6454d82501ba82fa1931ea56") ],
+                          bottom: new ObjectId("6454d79c01ba82fa1931ea53"),
+                          top: new ObjectId("6454d76001ba82fa1931ea50"),
+                          shoes: new ObjectId("6454d82501ba82fa1931ea56")};
         result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
@@ -242,26 +244,59 @@ server.put("/usersCollection/outfit", async (request, response, next) => {
 });
 
 
-// old login
-// /**
-//  * GET user by username and password
-//  * 'http://localhost:3005/loginInfoCollection?username=USERNAME&password=PASSWORD'
-//  */
-// server.get("/loginInfoCollection", async (request, response, next) => {
-//     try {
-//         let result = await db.collection("loginInfoCollection").findOne({ "username": request.query.username, 
-//                                                                           "password": request.query.password });
-//         result = await getUserById(result.userRef)
-//         if(result) {
-//             response.send(result);
-//         } 
-//         else {
-//             response.status(404).send();
-//         }
-//     } catch (e) {
-//         response.status(500).send({ message: e.message });
-//     }
-// });
+// DELETE user by username
+// 'http://localhost:3005/users?username=USERNAME'
+server.delete("/users", async (request, response, next) => {
+    try {
+        const username = request.query.username;
+        const result1 = await db.collection("usersCollection").deleteOne({ username: username }); 
+        const result2 = await db.collection("loginInfoCollection").deleteOne({ username: username });
+
+        if (result1.deletedCount > 0 && result2.deletedCount > 0) {
+            response.send({ message: "User deleted successfully." });
+        } else {
+            response.status(404).send({ message: "User not found." });
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+
+/**
+ * UPDATE the password of the given user
+ * "http://localhost:3005/usersCollection/password"
+ */
+server.put("/loginInfoCollection/password", async (request, response, next) => {
+    try {
+        const username = request.body.username;
+        const oldPassword = request.body.oldPassword;
+        const newPassword = request.body.newPassword;
+
+        // try to get the user using the oldPassword
+        const loginInfo = await db.collection("loginInfoCollection").findOne({ "username": username, "password": oldPassword });
+        if (!loginInfo) {
+            response.status(404).send();
+            return;
+        }
+        
+        // success -> the old password is correct. change it to the new password.
+        let result = await db.collection("loginInfoCollection").updateOne(
+            { username: username },
+            { $set: {password: newPassword} }
+        );
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
+
 
 
 async function main(){

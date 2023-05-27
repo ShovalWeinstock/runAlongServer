@@ -1,0 +1,135 @@
+const axios = require('axios');
+
+async function addUser(username, nickname, password) {
+  try {
+    console.log("test add user");
+    const response = await axios.post('http://localhost:3005/usersCollection', {
+      "username": username,
+      "nickname": nickname,
+      "password": password
+    });
+    console.log('added user successfully:\n', response.data);
+  } catch (error) {
+    console.error('error adding user:\n', error);
+  }
+}
+
+async function incrementRank(username) {
+  try {
+    console.log("test increment rank");
+    const response = await axios.put('http://localhost:3005/usersCollection/rank/' + username);
+    console.log('incremented rank successfully:\n', response.data);
+  } catch (error) {
+    console.error('error incrementing rank:\n', error);
+  }
+}
+
+async function updateCoins(username, amount) {
+  try {
+    console.log("test update coins");
+    const response = await axios.put('http://localhost:3005/usersCollection/coins?username=' + username + '&amount=' + amount);
+    console.log('updated coins successfully:\n', response.data);
+  } catch (error) {
+    console.error('error updating coins:\n', error);
+  }
+}
+
+async function updateInventory(username) {
+  try {
+    console.log("test update inventory (add item)");
+    const response = await axios.put('http://localhost:3005/usersCollection/inventory?username=' + username + '&itemId=63ff6c98add07a32333307bb');
+    console.log('inventory updated successfully:', response.data);
+  } catch (error) {
+    console.error('Error updating inventory:', error);
+  }
+}
+
+async function updatePassword(username, oldPassword, newPassword) {
+  try {
+    console.log("test update password");
+    const response = await axios.put(`http://localhost:3005/loginInfoCollection/password`, {
+      "username": username,
+      "oldPassword": oldPassword,
+      "newPassword": newPassword
+    });
+    console.log('Password updated successfully:\n', response.data);
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.error('User not found or old password is incorrect.');
+    } else {
+      console.error('Error updating password:\n', error.message);
+    }
+  }
+}
+
+async function getUserInventory(username) {
+  try {
+    console.log("test get user's inventory from clothesCollection");
+    const response = await axios.get('http://localhost:3005/clothesCollection/inventory/' + username);
+    if (response.data == "") {
+      console.log("user not found");
+    } else {
+      console.log('got inventory:\n', response.data);
+    }
+  } catch (error) {
+    console.error('error getting inventory:\n', error);
+  }
+}
+
+async function deleteUser(username) {
+  try {
+    console.log("test delete user");
+    const response = await axios.delete('http://localhost:3005/users?username=' + username);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function runTests() {
+  await addUser("test_username", "test_nickname", "Test_password1");
+
+  console.log("\n---------------------------------------------------\n");
+
+  await incrementRank("test_username");
+
+  console.log("\n---------------------------------------------------\n");
+  
+  console.log("increment coins");
+  await updateCoins("test_username", "200");
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("decrement coins");
+  await updateCoins("test_username", "-100");
+
+  console.log("\n---------------------------------------------------\n");
+
+  await updateInventory("test_username");
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("test update password - correct username and old password");
+  await updatePassword('test_username', 'Test_password1', 'Test_password2');
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("test update password - correct username and incorrect old password");
+  await updatePassword('test_username', 'Test_password', 'Test_password3');
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("test update password - incorrect username and correct old password");
+  await updatePassword('test_username1', 'Test_password2', 'Test_password4');
+
+  console.log("\n---------------------------------------------------\n");
+
+  await getUserInventory("test_username");
+
+  console.log("\n---------------------------------------------------\n");
+
+  // await deleteUser("test_username");
+}
+
+runTests();
+
