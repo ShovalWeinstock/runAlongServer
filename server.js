@@ -297,6 +297,34 @@ server.put("/loginInfoCollection/password", async (request, response, next) => {
 });
 
 
+/**
+ * POST race info
+ * 'http://localhost:3005/racesCollection'
+ */
+server.post("/racesCollection", async (request, response, next) => {
+    try {
+        let raceInfo = request.body;
+        let new_race = 
+            {
+                track_length: raceInfo.track_length,
+                ran: raceInfo.ran,
+                runner_id: new ObjectId(raceInfo.runner_id),
+                time: raceInfo.time,
+                is_winner: raceInfo.is_winner,
+                coins_earned: raceInfo.coins_earned,
+                xp_earned: raceInfo.xp_earned
+            };          
+        let result = await db.collection("racesCollection").insertOne(new_race);
+        if (result) {
+            response.send(result);
+        }
+        else {
+            response.status(404).send();
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
 
 
 async function main(){

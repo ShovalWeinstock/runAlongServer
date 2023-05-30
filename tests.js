@@ -14,9 +14,30 @@ async function addUser(username, nickname, password) {
   }
 }
 
+async function testLogin(username, password) {
+  try {
+    const loginData = {
+      username: username,
+      password: password
+    };
+
+    console.log("testing login...");
+    const response = await axios.post('http://localhost:3005/login', loginData);
+    console.log('Login successful:\n', response.data);
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      console.error('Invalid username or password.');
+    } else if (error.response && error.response.status === 404) {
+      console.error('User not found.');
+    } else {
+      console.error('Error occurred during login:\n', error.message);
+    }
+  }
+}
+
 async function incrementRank(username) {
   try {
-    console.log("test increment rank");
+    console.log("testing increment rank...");
     const response = await axios.put('http://localhost:3005/usersCollection/rank/' + username);
     console.log('incremented rank successfully:\n', response.data);
   } catch (error) {
@@ -26,7 +47,7 @@ async function incrementRank(username) {
 
 async function updateCoins(username, amount) {
   try {
-    console.log("test update coins");
+    console.log("testing update coins...");
     const response = await axios.put('http://localhost:3005/usersCollection/coins?username=' + username + '&amount=' + amount);
     console.log('updated coins successfully:\n', response.data);
   } catch (error) {
@@ -34,10 +55,10 @@ async function updateCoins(username, amount) {
   }
 }
 
-async function updateInventory(username) {
+async function updateInventory(username, item_id) {
   try {
-    console.log("test update inventory (add item)");
-    const response = await axios.put('http://localhost:3005/usersCollection/inventory?username=' + username + '&itemId=63ff6c98add07a32333307bb');
+    console.log("testing update inventory (add item)...");
+    const response = await axios.put('http://localhost:3005/usersCollection/inventory?username=' + username + '&itemId=' + item_id);
     console.log('inventory updated successfully:', response.data);
   } catch (error) {
     console.error('Error updating inventory:', error);
@@ -46,7 +67,7 @@ async function updateInventory(username) {
 
 async function updatePassword(username, oldPassword, newPassword) {
   try {
-    console.log("test update password");
+    console.log("testing update password...");
     const response = await axios.put(`http://localhost:3005/loginInfoCollection/password`, {
       "username": username,
       "oldPassword": oldPassword,
@@ -64,7 +85,7 @@ async function updatePassword(username, oldPassword, newPassword) {
 
 async function getUserInventory(username) {
   try {
-    console.log("test get user's inventory from clothesCollection");
+    console.log("testing get user's inventory from clothesCollection...");
     const response = await axios.get('http://localhost:3005/clothesCollection/inventory/' + username);
     if (response.data == "") {
       console.log("user not found");
@@ -78,7 +99,7 @@ async function getUserInventory(username) {
 
 async function deleteUser(username) {
   try {
-    console.log("test delete user");
+    console.log("testing delete user...");
     const response = await axios.delete('http://localhost:3005/users?username=' + username);
     console.log(response.data);
   } catch (error) {
@@ -86,8 +107,42 @@ async function deleteUser(username) {
   }
 }
 
+async function postRaceInfo() {
+  console.log("Testing POST race info...");
+  try {
+    const raceInfo = {
+      track_length: 1000,
+      ran: 800,
+      runner_id: "63ff66eaadd07a32333307b8",
+      time: 10,
+      is_winner: true,
+      coins_earned: 150,
+      xp_earned: 80
+    };
+    const response = await axios.post('http://localhost:3005/racesCollection', raceInfo);
+    console.log('Race info added successfully:\n', response.data);
+  } catch (error) {
+    console.error('Error occurred while adding race info:\n', error.message);
+  }
+}
+
 async function runTests() {
   await addUser("test_username", "test_nickname", "Test_password1");
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("test login correct username and correct password");
+  await testLogin("test_username", "Test_password1" )
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("test login incorrect username and correct password");
+  await testLogin("incorrect_username", "Test_password1" )
+
+  console.log("\n---------------------------------------------------\n");
+
+  console.log("test login correct username and incorrect password");
+  await testLogin("test_username", "incorrect_password")
 
   console.log("\n---------------------------------------------------\n");
 
@@ -105,7 +160,7 @@ async function runTests() {
 
   console.log("\n---------------------------------------------------\n");
 
-  await updateInventory("test_username");
+  await updateInventory("test_username", "63ff6c98add07a32333307bb");
 
   console.log("\n---------------------------------------------------\n");
 
@@ -129,6 +184,10 @@ async function runTests() {
   console.log("\n---------------------------------------------------\n");
 
   // await deleteUser("test_username");
+
+  console.log("\n---------------------------------------------------\n");
+
+  await postRaceInfo();
 }
 
 runTests();
