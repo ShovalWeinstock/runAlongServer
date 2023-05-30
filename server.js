@@ -327,6 +327,24 @@ server.post("/racesCollection", async (request, response, next) => {
 });
 
 
+/**
+ * GET items from racesCollection based on user's runner_id
+ * 'http://localhost:3005/racesCollection?runner_id=ID
+ */
+server.get("/racesCollection/:runner_id", async (request, response, next) => {
+    try {
+      const runnerId = request.params.runner_id;
+      const races = await db.collection("racesCollection").find({ "runner_id": new cObjectId(runnerId) }).toArray();
+      response.send(races);
+    } catch (e) {
+      response.status(500).send({ message: e.message });
+    }
+  });
+  
+
+
+
+
 async function main(){
 
     const client = new MongoClient(uri);

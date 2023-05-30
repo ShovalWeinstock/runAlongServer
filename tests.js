@@ -126,6 +126,16 @@ async function postRaceInfo() {
   }
 }
 
+async function getUserRaces(runnerId) {
+  try {
+    const response = await axios.get(`http://localhost:3005/racesCollection/${runnerId}`);
+    console.log('Got races:', response.data);
+  } catch (error) {
+    console.error('Error getting races:', error);
+  }
+}
+
+
 async function runTests() {
   await addUser("test_username", "test_nickname", "Test_password1");
 
@@ -188,6 +198,10 @@ async function runTests() {
   console.log("\n---------------------------------------------------\n");
 
   await postRaceInfo();
+
+  console.log("\n---------------------------------------------------\n");
+
+  await getUserRaces("63ff66eaadd07a32333307b8")
 }
 
 runTests();
