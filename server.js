@@ -306,13 +306,13 @@ server.post("/racesCollection", async (request, response, next) => {
         let raceInfo = request.body;
         let new_race = 
             {
-                track_length: raceInfo.track_length,
-                ran: raceInfo.ran,
+                track_length: parseInt(raceInfo.track_length),
+                ran: parseFloat(raceInfo.ran),
                 runner_id: new ObjectId(raceInfo.runner_id),
-                time: raceInfo.time,
-                is_winner: raceInfo.is_winner,
-                coins_earned: raceInfo.coins_earned,
-                xp_earned: raceInfo.xp_earned
+                time: parseFloat(raceInfo.time),
+                is_winner: Boolean(raceInfo.is_winner),
+                coins_earned: parseInt(raceInfo.coins_earned),
+                xp_earned: parseInt(raceInfo.xp_earned)
             };          
         let result = await db.collection("racesCollection").insertOne(new_race);
         if (result) {
@@ -334,16 +334,13 @@ server.post("/racesCollection", async (request, response, next) => {
 server.get("/racesCollection/:runner_id", async (request, response, next) => {
     try {
       const runnerId = request.params.runner_id;
-      const races = await db.collection("racesCollection").find({ "runner_id": new cObjectId(runnerId) }).toArray();
+      const races = await db.collection("racesCollection").find({ "runner_id": new ObjectId(runnerId) }).toArray();
       response.send(races);
     } catch (e) {
       response.status(500).send({ message: e.message });
     }
   });
   
-
-
-
 
 async function main(){
 
