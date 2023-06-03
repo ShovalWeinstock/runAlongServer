@@ -412,7 +412,7 @@ server.post("/racesCollection", async (request, response, next) => {
 
 
 /**
- * GET items from racesCollection based on user's runner_username
+ * GET items from racesCollection based on user's username
  * 'http://localhost:3005/racesCollection?runner_username=USERNAME
  */
 server.get("/racesCollection/:runner_username", async (request, response, next) => {
@@ -425,7 +425,10 @@ server.get("/racesCollection/:runner_username", async (request, response, next) 
     }
   });
 
-
+/**
+ * GET the lasr race if a runner given his username
+ * 'http://localhost:3005/lastRace?runner_username=USERNAME
+ */
 server.get("/lastRace/:runner_username", async (request, response, next) => {
     try {
         const runnerUsername = request.params.runner_username;
@@ -436,8 +439,11 @@ server.get("/lastRace/:runner_username", async (request, response, next) => {
     }
     });
 
-  
-server.get("/achievements/:runner_username", async (request, response, next) => {
+/**
+ * GET xp+rank given username
+ * 'http://localhost:3005/achievements?username=USERNAME
+ */  
+server.get("/achievements/:username", async (request, response, next) => {
     try {
         const  achievements = await db.collection("usersCollection").findOne(
             { username: request.params.username },
