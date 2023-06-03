@@ -1,0 +1,16 @@
+{
+    "Statement": [
+        {
+            "Action": [
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::codedeploydemobucket/*",
+            "Principal": {
+                "AWS": [
+                    "447038713087"
+                ]
+            }
+        }
+    ]
+}

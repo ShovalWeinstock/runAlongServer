@@ -346,10 +346,11 @@ async function main(){
 
     const client = new MongoClient(uri);
 
-    server.listen("3005", async () => {
+    server.listen("80", async () => {
         try {
             await client.connect();
             db = client.db("runalong");
+            console.log("Listening on port 80")
         } catch (e) {
             console.error(e);
         }
