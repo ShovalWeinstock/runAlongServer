@@ -340,6 +340,16 @@ server.get("/racesCollection/:runner_id", async (request, response, next) => {
       response.status(500).send({ message: e.message });
     }
   });
+
+  server.get("/lastRace/:runner_id", async (request, response, next) => {
+    try {
+      const runnerId = request.params.runner_id;
+      const races = await db.collection("racesCollection").find({ "runner_id": new ObjectId(runnerId) }).toArray();
+      response.send(races.slice(-1));
+    } catch (e) {
+      response.status(500).send({ message: e.message });
+    }
+  });
   
 
 async function main(){
