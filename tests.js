@@ -122,7 +122,7 @@ async function postRaceInfo() {
       time: "10",
       is_winner: "true",
       coins_earned: "15",
-      xp_earned: "1100"
+      xp_earned: "5"
     };
     const response = await axios.post('http://' + server_address + '/racesCollection', raceInfo);
     console.log('Race info added successfully:\n', response.data);
@@ -140,7 +140,6 @@ async function getUserRaces(username) {
     console.error('Error getting races:', error);
   }
 }
-
 
 async function runTests() {
   // await addUser("test_username", "test_nickname", "Test_password1");
@@ -203,7 +202,7 @@ async function runTests() {
 
   // console.log("\n---------------------------------------------------\n");
 
-  // await postRaceInfo();
+  //await postRaceInfo();
 
   // console.log("\n---------------------------------------------------\n");
 

@@ -447,7 +447,7 @@ server.get("/achievements/:username", async (request, response, next) => {
     try {
         const  achievements = await db.collection("usersCollection").findOne(
             { username: request.params.username },
-            { projection: { rank: 1, xp: 1 } }
+            { projection: { rank: 1, xp: 1, coins: 1} }
         );
 
         if (achievements) {
