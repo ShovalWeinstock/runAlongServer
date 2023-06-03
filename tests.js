@@ -113,11 +113,11 @@ async function postRaceInfo() {
     const raceInfo = {
       track_length: "1000",
       ran: "800",
-      runner_id: "63ff66eaadd07a32333307b8",
+      runner_username: "EinatSaruf",
       time: "10",
       is_winner: "true",
-      coins_earned: "150",
-      xp_earned: "-2080"
+      coins_earned: "15",
+      xp_earned: "-100"
     };
     const response = await axios.post('http://localhost:3005/racesCollection', raceInfo);
     console.log('Race info added successfully:\n', response.data);
@@ -138,7 +138,7 @@ async function getUserRaces(runnerId) {
 
 
 async function runTests() {
-  // await addUser("test_username", "test_nickname", "Test_password1");
+  //await addUser("test_username", "test_nickname", "Test_password1");
 
   // console.log("\n---------------------------------------------------\n");
 
@@ -156,7 +156,7 @@ async function runTests() {
   // await testLogin("test_username", "incorrect_password")
 
   // console.log("\n---------------------------------------------------\n");
-
+  // todo deleteeeeeeeeeeeeee
   // await incrementRank("test_username");
 
   // console.log("\n---------------------------------------------------\n");
@@ -200,9 +200,9 @@ async function runTests() {
 
   await postRaceInfo();
 
-  console.log("\n---------------------------------------------------\n");
+  // console.log("\n---------------------------------------------------\n");
 
-  await getUserRaces("63ff66eaadd07a32333307b8")
+  // await getUserRaces("63ff66eaadd07a32333307b8")
 }
 
 runTests();

@@ -46,7 +46,8 @@ async function addUser(newListing){
                                       new ObjectId("6454d82501ba82fa1931ea56") ],
                           bottom: new ObjectId("6454d79c01ba82fa1931ea53"),
                           top: new ObjectId("6454d76001ba82fa1931ea50"),
-                          shoes: new ObjectId("6454d82501ba82fa1931ea56")};
+                          shoes: new ObjectId("6454d82501ba82fa1931ea56"),
+                          xp: 0};
         result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
@@ -298,31 +299,113 @@ server.put("/loginInfoCollection/password", async (request, response, next) => {
 
 
 /**
+ * Update the rank of the given user by the given amount
+ */
+async function update_rank(username, amount) {
+    try {
+        let result = await db.collection("usersCollection").updateOne(
+            { username: username },
+            { $inc: { rank: amount } }
+        );
+        return result;
+    } catch (e) {
+        console.error(e);
+        throw e; // Re-throw the error to propagate it to the caller
+    }
+}
+
+/**
+ * Update the xp of the given user by xp_earned. If needed - update its rank accordingly.
+ */
+async function updateXP(username, xp_earned) {
+    try {
+        let userInfo = await db.collection("usersCollection").findOne(
+            { username: username },
+            { projection: { rank: 1, xp: 1 } }
+        );
+
+        let currXP = userInfo.xp + xp_earned;
+
+        if (currXP >= 1000) {
+            await update_rank(username, 1);
+            currXP -= 1000;
+        } else if (currXP < 0) {
+            let currRank = userInfo.rank;
+            if (currRank > 0) {
+                await update_rank(username, -1);
+                currXP = 0;
+            }
+        }
+
+        let result = await db.collection("usersCollection").updateOne(
+            { username: username },
+            { $set: { xp: currXP } }
+        );
+        return result;
+    } catch (e) {
+        console.error(e);
+        throw e; // Re-throw the error to propagate it to the caller
+    }
+}
+
+/**
+ * Update the coins of the given user by the given amount
+ */
+async function updateCoins(username, amount) {
+    try {
+        let result = await db.collection("usersCollection").updateOne(
+            { username: username },
+            { $inc: { coins: amount } }
+        );
+        return result;
+    } catch (e) {
+        console.error(e);
+        throw e; // Re-throw the error to propagate it to the caller
+    }
+}
+
+/**
  * POST race info
  * 'http://localhost:3005/racesCollection'
  */
 server.post("/racesCollection", async (request, response, next) => {
     try {
         let raceInfo = request.body;
-        let new_race = 
-            {
-                track_length: parseInt(raceInfo.track_length),
-                ran: parseFloat(raceInfo.ran),
-                runner_id: new ObjectId(raceInfo.runner_id),
-                time: parseFloat(raceInfo.time),
-                is_winner: Boolean(raceInfo.is_winner),
-                coins_earned: parseInt(raceInfo.coins_earned),
-                xp_earned: parseInt(raceInfo.xp_earned)
-            };          
-        let result = await db.collection("racesCollection").insertOne(new_race);
-        if (result) {
-            response.send(result);
+        let runner_username = raceInfo.runner_username;
+        let xp_earned = parseInt(raceInfo.xp_earned);
+        let coins_earned = parseInt(raceInfo.coins_earned);
+
+        // Update user info: update xp (and rank if needed)
+        let result = await updateXP(runner_username, xp_earned);
+        if (!result) {
+            return response.status(404).send("Failed to update XP for the runner.");
         }
-        else {
-            response.status(404).send();
+
+        // Update user info: add coins
+        result = await updateCoins(runner_username, coins_earned);
+        if (!result) {
+            return response.status(404).send("Failed to update coins for the runner.");
+        }
+
+        // Save race info
+        let new_race = {
+            track_length: parseInt(raceInfo.track_length),
+            ran: parseFloat(raceInfo.ran),
+            runner_username: runner_username,
+            time: parseFloat(raceInfo.time),
+            is_winner: Boolean(raceInfo.is_winner),
+            coins_earned: coins_earned,
+            xp_earned: xp_earned,
+        };
+        result = await db.collection("racesCollection").insertOne(new_race);
+        if (result) {
+            return response.send(result);
+        } else {
+            return response.status(404).send("Failed to save race info.");
         }
     } catch (e) {
-        response.status(500).send({ message: e.message });
+        console.error(e);
+        return response.status(500).send({ message: e.message });
     }
 });
 
