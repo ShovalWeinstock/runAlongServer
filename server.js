@@ -41,13 +41,14 @@ async function addUser(newListing){
                           nickname: newListing.nickname,
                           rank: 0, 
                           coins: 0,
+                          xp: 0,
                           inventory: [new ObjectId("6454d79c01ba82fa1931ea53"),
                                       new ObjectId("6454d76001ba82fa1931ea50"),
                                       new ObjectId("6454d82501ba82fa1931ea56") ],
                           bottom: new ObjectId("6454d79c01ba82fa1931ea53"),
                           top: new ObjectId("6454d76001ba82fa1931ea50"),
                           shoes: new ObjectId("6454d82501ba82fa1931ea56"),
-                          xp: 0};
+                        };
         result = await db.collection("usersCollection").insertOne(userObject);
         let loginInfo = {username: newListing.username,
                          password: newListing.password,
@@ -411,28 +412,48 @@ server.post("/racesCollection", async (request, response, next) => {
 
 
 /**
- * GET items from racesCollection based on user's runner_id
- * 'http://localhost:3005/racesCollection?runner_id=ID
+ * GET items from racesCollection based on user's runner_username
+ * 'http://localhost:3005/racesCollection?runner_username=USERNAME
  */
-server.get("/racesCollection/:runner_id", async (request, response, next) => {
+server.get("/racesCollection/:runner_username", async (request, response, next) => {
     try {
-      const runnerId = request.params.runner_id;
-      const races = await db.collection("racesCollection").find({ "runner_id": new ObjectId(runnerId) }).toArray();
+      const runnerUsername = request.params.runner_username;
+      const races = await db.collection("racesCollection").find({ "runner_username": runnerUsername }).toArray();
       response.send(races);
     } catch (e) {
       response.status(500).send({ message: e.message });
     }
   });
 
-  server.get("/lastRace/:runner_id", async (request, response, next) => {
+
+server.get("/lastRace/:runner_username", async (request, response, next) => {
     try {
-      const runnerId = request.params.runner_id;
-      const races = await db.collection("racesCollection").find({ "runner_id": new ObjectId(runnerId) }).toArray();
-      response.send(races.slice(-1));
+        const runnerUsername = request.params.runner_username;
+        const races = await db.collection("racesCollection").find({ "runner_username": runnerUsername }).toArray();
+        response.send(races.slice(-1));
     } catch (e) {
-      response.status(500).send({ message: e.message });
+        response.status(500).send({ message: e.message });
     }
-  });
+    });
+
+  
+server.get("/achievements/:runner_username", async (request, response, next) => {
+    try {
+        const  achievements = await db.collection("usersCollection").findOne(
+            { username: request.params.username },
+            { projection: { rank: 1, xp: 1 } }
+        );
+
+        if (achievements) {
+            response.send(achievements);
+        } else {
+            response.status(401).send({ message: "Failed to get user's achievenets." });
+        }
+    } catch (e) {
+        response.status(500).send({ message: e.message });
+    }
+});
+
   
 
 async function main(){

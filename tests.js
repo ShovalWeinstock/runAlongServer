@@ -1,9 +1,12 @@
 const axios = require('axios');
+//const server_address = "3.15.7.16:80";
+const server_address = "localhost:80";
+
 
 async function addUser(username, nickname, password) {
   try {
     console.log("test add user");
-    const response = await axios.post('http://localhost:3005/usersCollection', {
+    const response = await axios.post('http://' + server_address + '/usersCollection', {
       "username": username,
       "nickname": nickname,
       "password": password
@@ -22,7 +25,7 @@ async function testLogin(username, password) {
     };
 
     console.log("testing login...");
-    const response = await axios.post('http://localhost:3005/login', loginData);
+    const response = await axios.post('http://' + server_address + '/login', loginData);
     console.log('Login successful:\n', response.data);
   } catch (error) {
     if (error.response && error.response.status === 401) {
@@ -38,7 +41,7 @@ async function testLogin(username, password) {
 async function incrementRank(username) {
   try {
     console.log("testing increment rank...");
-    const response = await axios.put('http://localhost:3005/usersCollection/rank/' + username);
+    const response = await axios.put('http://' + server_address + '/usersCollection/rank/' + username);
     console.log('incremented rank successfully:\n', response.data);
   } catch (error) {
     console.error('error incrementing rank:\n', error);
@@ -48,7 +51,8 @@ async function incrementRank(username) {
 async function updateCoins(username, amount) {
   try {
     console.log("testing update coins...");
-    const response = await axios.put('http://localhost:3005/usersCollection/coins?username=' + username + '&amount=' + amount);
+    const response = await axios.put('http://' + server_address + '/usersCollection/coins?username=' + 
+                                      username + '&amount=' + amount);
     console.log('updated coins successfully:\n', response.data);
   } catch (error) {
     console.error('error updating coins:\n', error);
@@ -58,7 +62,8 @@ async function updateCoins(username, amount) {
 async function updateInventory(username, item_id) {
   try {
     console.log("testing update inventory (add item)...");
-    const response = await axios.put('http://localhost:3005/usersCollection/inventory?username=' + username + '&itemId=' + item_id);
+    const response = await axios.put('http://' + server_address + '/usersCollection/inventory?username=' + 
+                                      username + '&itemId=' + item_id);
     console.log('inventory updated successfully:', response.data);
   } catch (error) {
     console.error('Error updating inventory:', error);
@@ -68,7 +73,7 @@ async function updateInventory(username, item_id) {
 async function updatePassword(username, oldPassword, newPassword) {
   try {
     console.log("testing update password...");
-    const response = await axios.put(`http://localhost:3005/loginInfoCollection/password`, {
+    const response = await axios.put('http://' + server_address + '/loginInfoCollection/password', {
       "username": username,
       "oldPassword": oldPassword,
       "newPassword": newPassword
@@ -86,7 +91,7 @@ async function updatePassword(username, oldPassword, newPassword) {
 async function getUserInventory(username) {
   try {
     console.log("testing get user's inventory from clothesCollection...");
-    const response = await axios.get('http://localhost:3005/clothesCollection/inventory/' + username);
+    const response = await axios.get('http://' + server_address + '/clothesCollection/inventory/' + username);
     if (response.data == "") {
       console.log("user not found");
     } else {
@@ -100,7 +105,7 @@ async function getUserInventory(username) {
 async function deleteUser(username) {
   try {
     console.log("testing delete user...");
-    const response = await axios.delete('http://localhost:3005/users?username=' + username);
+    const response = await axios.delete('http://' + server_address + '/users?username=' + username);
     console.log(response.data);
   } catch (error) {
     console.error(error);
@@ -113,23 +118,23 @@ async function postRaceInfo() {
     const raceInfo = {
       track_length: "1000",
       ran: "800",
-      runner_username: "EinatSaruf",
+      runner_username: "test_username",
       time: "10",
       is_winner: "true",
       coins_earned: "15",
-      xp_earned: "-100"
+      xp_earned: "1100"
     };
-    const response = await axios.post('http://localhost:3005/racesCollection', raceInfo);
+    const response = await axios.post('http://' + server_address + '/racesCollection', raceInfo);
     console.log('Race info added successfully:\n', response.data);
   } catch (error) {
     console.error('Error occurred while adding race info:\n', error.message);
   }
 }
 
-async function getUserRaces(runnerId) {
+async function getUserRaces(username) {
   console.log("Testing get User Races...");
   try {
-    const response = await axios.get(`http://localhost:3005/racesCollection/${runnerId}`);
+    const response = await axios.get('http://' + server_address + '/racesCollection/' + username);
     console.log('Got races:', response.data);
   } catch (error) {
     console.error('Error getting races:', error);
@@ -138,7 +143,7 @@ async function getUserRaces(runnerId) {
 
 
 async function runTests() {
-  //await addUser("test_username", "test_nickname", "Test_password1");
+  // await addUser("test_username", "test_nickname", "Test_password1");
 
   // console.log("\n---------------------------------------------------\n");
 
@@ -156,7 +161,7 @@ async function runTests() {
   // await testLogin("test_username", "incorrect_password")
 
   // console.log("\n---------------------------------------------------\n");
-  // todo deleteeeeeeeeeeeeee
+
   // await incrementRank("test_username");
 
   // console.log("\n---------------------------------------------------\n");
@@ -198,11 +203,11 @@ async function runTests() {
 
   // console.log("\n---------------------------------------------------\n");
 
-  await postRaceInfo();
+  // await postRaceInfo();
 
   // console.log("\n---------------------------------------------------\n");
 
-  // await getUserRaces("63ff66eaadd07a32333307b8")
+  await getUserRaces("test_username")
 }
 
 runTests();
