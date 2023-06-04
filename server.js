@@ -434,7 +434,7 @@ server.get("/lastRace/:runner_username", async (request, response, next) => {
     try {
         const runnerUsername = request.params.runner_username;
         const races = await db.collection("racesCollection").find({ "runner_username": runnerUsername }).toArray();
-        response.send(races.slice(-1));
+        response.send(races[races.length - 1]);
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
