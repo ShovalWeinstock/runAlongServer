@@ -334,8 +334,8 @@ async function updateXP(username, xp_earned) {
             let currRank = userInfo.rank;
             if (currRank > 0) {
                 await update_rank(username, -1);
-                currXP = 0;
             }
+            currXP = 0;
         }
 
         let result = await db.collection("usersCollection").updateOne(
@@ -470,7 +470,6 @@ async function main(){
         try {
             await client.connect();
             db = client.db("runalong");
-            console.log("Listening on port 80")
         } catch (e) {
             console.error(e);
         }
