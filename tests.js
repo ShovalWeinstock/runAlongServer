@@ -202,11 +202,11 @@ async function runTests() {
 
   // console.log("\n---------------------------------------------------\n");
 
-  //await postRaceInfo();
+  await postRaceInfo();
 
   // console.log("\n---------------------------------------------------\n");
 
-  await getUserRaces("test_username")
+  //await getUserRaces("test_username")
 }
 
 runTests();

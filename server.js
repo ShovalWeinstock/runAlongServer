@@ -397,6 +397,7 @@ server.post("/racesCollection", async (request, response, next) => {
             is_winner: Boolean(raceInfo.is_winner),
             coins_earned: coins_earned,
             xp_earned: xp_earned,
+            date: new Date().toLocaleDateString()
         };
         result = await db.collection("racesCollection").insertOne(new_race);
         if (result) {
