@@ -387,14 +387,14 @@ server.post("/racesCollection", async (request, response, next) => {
         if (!result) {
             return response.status(404).send("Failed to update coins for the runner.");
         }
-        let won = JSON.parse(raceInfo.is_winner) == "true";
+        let won = raceInfo.is_winner == "true" || raceInfo.is_winner == "True";
         // Save race info
         let new_race = {
             track_length: parseInt(raceInfo.track_length),
             ran: parseFloat(raceInfo.ran),
             runner_username: runner_username,
             time: parseFloat(raceInfo.time),
-            is_winner: Boolean(raceInfo.is_winner),
+            is_winner: won,
             coins_earned: coins_earned,
             xp_earned: xp_earned,
             date: new Date().toLocaleDateString()
