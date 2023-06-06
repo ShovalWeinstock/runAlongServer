@@ -387,7 +387,7 @@ server.post("/racesCollection", async (request, response, next) => {
         if (!result) {
             return response.status(404).send("Failed to update coins for the runner.");
         }
-
+        let won = JSON.parse(raceInfo.is_winner) == "true";
         // Save race info
         let new_race = {
             track_length: parseInt(raceInfo.track_length),
@@ -469,6 +469,7 @@ async function main(){
 
     server.listen("80", async () => {
         try {
+            console.log("Listening on port 80");
             await client.connect();
             db = client.db("runalong");
         } catch (e) {
