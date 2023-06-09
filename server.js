@@ -17,7 +17,6 @@ var db;
  * Check if the given user information is valid
  */
 async function isValidUser(userInfo) {
-    // todo - check if the password is valid in the client side?
     try {
         let findUsername = await db.collection("usersCollection").findOne({"username": userInfo.username});                      
         if(findUsername == null) {
@@ -365,6 +364,19 @@ async function updateCoins(username, amount) {
     }
 }
 
+
+function getDate() {
+    const date = new Date();
+
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+
+    // This arrangement can be altered based on how we want the date's format to appear.
+    let currentDate = `${day}/${month}/${year}`;
+    return currentDate;
+}
+
 /**
  * POST race info
  * 'http://localhost:3005/racesCollection'
@@ -387,17 +399,17 @@ server.post("/racesCollection", async (request, response, next) => {
         if (!result) {
             return response.status(404).send("Failed to update coins for the runner.");
         }
-        let won = raceInfo.is_winner == "true" || raceInfo.is_winner == "True";
+
         // Save race info
         let new_race = {
             track_length: parseInt(raceInfo.track_length),
             ran: parseFloat(raceInfo.ran),
             runner_username: runner_username,
             time: parseFloat(raceInfo.time),
-            is_winner: won,
+            is_winner: Boolean(raceInfo.is_winner),
             coins_earned: coins_earned,
             xp_earned: xp_earned,
-            date: new Date().toLocaleDateString()
+            date: getDate()
         };
         result = await db.collection("racesCollection").insertOne(new_race);
         if (result) {
@@ -434,7 +446,7 @@ server.get("/lastRace/:runner_username", async (request, response, next) => {
     try {
         const runnerUsername = request.params.runner_username;
         const races = await db.collection("racesCollection").find({ "runner_username": runnerUsername }).toArray();
-        response.send(races[races.length - 1]);
+        response.send(races.slice(-1));
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -469,7 +481,6 @@ async function main(){
 
     server.listen("80", async () => {
         try {
-            console.log("Listening on port 80");
             await client.connect();
             db = client.db("runalong");
         } catch (e) {
