@@ -39,7 +39,7 @@ async function addUser(newListing){
     if (await isValidUser(newListing)) {
         let userObject = {username: newListing.username,
                           nickname: newListing.nickname,
-                          rank: 0, 
+                          rank: 1, 
                           coins: 0,
                           xp: 0,
                           inventory: [new ObjectId("6454d79c01ba82fa1931ea53"),
@@ -332,7 +332,7 @@ async function updateXP(username, xp_earned) {
             currXP -= 1000;
         } else if (currXP < 0) {
             let currRank = userInfo.rank;
-            if (currRank > 0) {
+            if (currRank > 1) {
                 await update_rank(username, -1);
             }
             currXP = 0;
