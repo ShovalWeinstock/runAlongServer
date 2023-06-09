@@ -387,14 +387,14 @@ server.post("/racesCollection", async (request, response, next) => {
         if (!result) {
             return response.status(404).send("Failed to update coins for the runner.");
         }
-
+        let won = raceInfo.is_winner == "true" || raceInfo.is_winner == "True";
         // Save race info
         let new_race = {
             track_length: parseInt(raceInfo.track_length),
             ran: parseFloat(raceInfo.ran),
             runner_username: runner_username,
             time: parseFloat(raceInfo.time),
-            is_winner: Boolean(raceInfo.is_winner),
+            is_winner: won,
             coins_earned: coins_earned,
             xp_earned: xp_earned,
             date: new Date().toLocaleDateString()
@@ -434,7 +434,7 @@ server.get("/lastRace/:runner_username", async (request, response, next) => {
     try {
         const runnerUsername = request.params.runner_username;
         const races = await db.collection("racesCollection").find({ "runner_username": runnerUsername }).toArray();
-        response.send(races.slice(-1));
+        response.send(races[races.length - 1]);
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
@@ -469,6 +469,7 @@ async function main(){
 
     server.listen("80", async () => {
         try {
+            console.log("Listening on port 80");
             await client.connect();
             db = client.db("runalong");
         } catch (e) {
