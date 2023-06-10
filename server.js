@@ -230,7 +230,9 @@ server.put("/usersCollection/outfit", async (request, response, next) => {
     try {
         let result = await db.collection("usersCollection").updateOne(
             { username: request.query.username },
-            { $set: {top: new ObjectId(request.body.top), bottom: new ObjectId(request.body.bottom), shoes: new ObjectId(request.body.shoes)} }
+            { $set: {top: new ObjectId(request.body.top), 
+                     bottom: new ObjectId(request.body.bottom),
+                     shoes: new ObjectId(request.body.shoes)} }
         );
         if (result) {
             response.send(result);
