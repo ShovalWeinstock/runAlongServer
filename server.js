@@ -6,8 +6,6 @@ const server = Express();
 server.use(BodyParser.json());
 server.use(BodyParser.urlencoded({ extended: true }));
 
-//const client = new MongoClient(process.env["ATLAS_URI"]);
-//added "?retryWrites=true&w=majority";" to the end of the string
 const uri = "mongodb+srv://shoval:atlas@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
 
 var db;
@@ -223,6 +221,7 @@ server.put("/usersCollection/inventory", async (request, response, next) => {
     }
 });
 
+
 /**
  * UPDATE the outfit (top, bottom, shoes) of the given user
  * "http://localhost:3005/usersCollection/outfit?username=USERNAME"
@@ -314,6 +313,7 @@ async function update_rank(username, amount) {
     }
 }
 
+
 /**
  * Update the xp of the given user by xp_earned. If needed - update its rank accordingly.
  */
@@ -348,6 +348,7 @@ async function updateXP(username, xp_earned) {
     }
 }
 
+
 /**
  * Update the coins of the given user by the given amount
  */
@@ -365,6 +366,9 @@ async function updateCoins(username, amount) {
 }
 
 
+/**
+ * Get a string of the current date
+ */
 function getDate() {
     const date = new Date();
 
@@ -372,10 +376,11 @@ function getDate() {
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
 
-    // This arrangement can be altered based on how we want the date's format to appear.
     let currentDate = `${day}/${month}/${year}`;
+
     return currentDate;
 }
+
 
 /**
  * POST race info
@@ -436,7 +441,8 @@ server.get("/racesCollection/:runner_username", async (request, response, next) 
     } catch (e) {
       response.status(500).send({ message: e.message });
     }
-  });
+});
+
 
 /**
  * GET the lasr race if a runner given his username
@@ -450,7 +456,8 @@ server.get("/lastRace/:runner_username", async (request, response, next) => {
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
-    });
+});
+
 
 /**
  * GET xp+rank given username

@@ -1,7 +1,7 @@
 const {MongoClient} = require("mongodb");
 const axios = require('axios');
-//const server_address = "3.15.7.16:80";
-const server_address = "localhost:80";
+const server_address = "3.15.7.16:80";
+//const server_address = "localhost:80";
 
 const uri = "mongodb+srv://shoval:atlas@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
 var db;
@@ -131,7 +131,7 @@ async function testDeleteUser(username) {
     const response = await axios.delete('http://' + server_address + '/users?username=' + username);
     let exists = await usernameExists(username);
     if (!exists) {
-      console.log('user deleted successfully:');
+      console.log('user deleted successfully');
     }
   } catch (error) {
     console.error('error deleting user:\n', error);
