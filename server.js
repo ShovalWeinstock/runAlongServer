@@ -412,7 +412,7 @@ server.post("/racesCollection", async (request, response, next) => {
             track_length: parseInt(raceInfo.track_length),
             ran: parseFloat(raceInfo.ran),
             runner_username: runner_username,
-            time: parseFloat(raceInfo.time),
+            time: raceInfo.time,
             is_winner: Boolean(raceInfo.is_winner),
             coins_earned: coins_earned,
             xp_earned: xp_earned,

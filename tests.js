@@ -145,7 +145,7 @@ async function testPostRaceInfo() {
       track_length: "2",
       ran: "0.8",
       runner_username: "test_username",
-      time: "12",
+      time: "00:23:15",
       is_winner: "true",
       coins_earned: "15",
       xp_earned: "5"
