@@ -148,7 +148,7 @@ async function testPostRaceInfo() {
       time: "00:23:15",
       is_winner: "true",
       coins_earned: "15",
-      xp_earned: "5"
+      xp_earned: "115"
     };
     const response = await axios.post('http://' + server_address + '/racesCollection', raceInfo);
     console.log('Race info added successfully:\n', response.data);
