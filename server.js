@@ -6,8 +6,6 @@ const server = Express();
 server.use(BodyParser.json());
 server.use(BodyParser.urlencoded({ extended: true }));
 
-//const client = new MongoClient(process.env["ATLAS_URI"]);
-//added "?retryWrites=true&w=majority";" to the end of the string
 const uri = "mongodb+srv://shoval:atlas@cluster0.dbts3lw.mongodb.net/test?retryWrites=true&w=majority";
 
 var db;
@@ -17,7 +15,6 @@ var db;
  * Check if the given user information is valid
  */
 async function isValidUser(userInfo) {
-    // todo - check if the password is valid in the client side?
     try {
         let findUsername = await db.collection("usersCollection").findOne({"username": userInfo.username});                      
         if(findUsername == null) {
@@ -39,7 +36,7 @@ async function addUser(newListing){
     if (await isValidUser(newListing)) {
         let userObject = {username: newListing.username,
                           nickname: newListing.nickname,
-                          rank: 0, 
+                          rank: 1, 
                           coins: 0,
                           xp: 0,
                           inventory: [new ObjectId("6454d79c01ba82fa1931ea53"),
@@ -224,6 +221,7 @@ server.put("/usersCollection/inventory", async (request, response, next) => {
     }
 });
 
+
 /**
  * UPDATE the outfit (top, bottom, shoes) of the given user
  * "http://localhost:3005/usersCollection/outfit?username=USERNAME"
@@ -232,7 +230,9 @@ server.put("/usersCollection/outfit", async (request, response, next) => {
     try {
         let result = await db.collection("usersCollection").updateOne(
             { username: request.query.username },
-            { $set: {top: new ObjectId(request.body.top), bottom: new ObjectId(request.body.bottom), shoes: new ObjectId(request.body.shoes)} }
+            { $set: {top: new ObjectId(request.body.top), 
+                     bottom: new ObjectId(request.body.bottom),
+                     shoes: new ObjectId(request.body.shoes)} }
         );
         if (result) {
             response.send(result);
@@ -315,6 +315,7 @@ async function update_rank(username, amount) {
     }
 }
 
+
 /**
  * Update the xp of the given user by xp_earned. If needed - update its rank accordingly.
  */
@@ -332,7 +333,7 @@ async function updateXP(username, xp_earned) {
             currXP -= 1000;
         } else if (currXP < 0) {
             let currRank = userInfo.rank;
-            if (currRank > 0) {
+            if (currRank > 1) {
                 await update_rank(username, -1);
             }
             currXP = 0;
@@ -349,6 +350,7 @@ async function updateXP(username, xp_earned) {
     }
 }
 
+
 /**
  * Update the coins of the given user by the given amount
  */
@@ -364,6 +366,23 @@ async function updateCoins(username, amount) {
         throw e; // Re-throw the error to propagate it to the caller
     }
 }
+
+
+/**
+ * Get a string of the current date
+ */
+function getDate() {
+    const date = new Date();
+
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+
+    let currentDate = `${day}/${month}/${year}`;
+
+    return currentDate;
+}
+
 
 /**
  * POST race info
@@ -387,17 +406,17 @@ server.post("/racesCollection", async (request, response, next) => {
         if (!result) {
             return response.status(404).send("Failed to update coins for the runner.");
         }
-        let won = raceInfo.is_winner == "true" || raceInfo.is_winner == "True";
+
         // Save race info
         let new_race = {
             track_length: parseInt(raceInfo.track_length),
             ran: parseFloat(raceInfo.ran),
             runner_username: runner_username,
-            time: parseFloat(raceInfo.time),
-            is_winner: won,
+            time: raceInfo.time,
+            is_winner: Boolean(raceInfo.is_winner),
             coins_earned: coins_earned,
             xp_earned: xp_earned,
-            date: new Date().toLocaleDateString()
+            date: getDate()
         };
         result = await db.collection("racesCollection").insertOne(new_race);
         if (result) {
@@ -424,7 +443,8 @@ server.get("/racesCollection/:runner_username", async (request, response, next) 
     } catch (e) {
       response.status(500).send({ message: e.message });
     }
-  });
+});
+
 
 /**
  * GET the lasr race if a runner given his username
@@ -439,7 +459,8 @@ server.get("/lastRace/:runner_username", async (request, response, next) => {
     } catch (e) {
         response.status(500).send({ message: e.message });
     }
-    });
+});
+
 
 /**
  * GET xp+rank given username
@@ -470,7 +491,6 @@ async function main(){
 
     server.listen("80", async () => {
         try {
-            console.log("Listening on port 80");
             await client.connect();
             db = client.db("runalong");
         } catch (e) {
