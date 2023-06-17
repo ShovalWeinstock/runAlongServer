@@ -413,7 +413,7 @@ server.post("/racesCollection", async (request, response, next) => {
             ran: parseFloat(raceInfo.ran),
             runner_username: runner_username,
             time: raceInfo.time,
-            is_winner: Boolean(raceInfo.is_winner),
+            is_winner: stringToBool(raceInfo.is_winner),
             coins_earned: coins_earned,
             xp_earned: xp_earned,
             date: getDate()
@@ -482,6 +482,10 @@ server.get("/achievements/:username", async (request, response, next) => {
     }
 });
 
+function stringToBool(str) {
+    return !(str == "False" || str == "false");
+} 
+
   
 
 async function main(){
@@ -492,6 +496,7 @@ async function main(){
         try {
             await client.connect();
             db = client.db("runalong");
+            console.log("Listening on port 80");
         } catch (e) {
             console.error(e);
         }
