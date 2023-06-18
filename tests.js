@@ -142,8 +142,8 @@ async function testPostRaceInfo() {
   console.log("Testing POST race info...");
   try {
     const raceInfo = {
-      track_length: "2",
-      ran: "0.8",
+      track_length: "2000",
+      ran: "800",
       runner_username: "test_username",
       time: "00:23:15",
       is_winner: "true",
